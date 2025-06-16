@@ -1,0 +1,81 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django migrations (optional to ignore if you want to track them)
+**/migrations/
+!*/migrations/__init__.py
+
+# Environment variables / secrets
+.env
+*.env
+.env.*
+
+# IDE / Editor configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.python-version
+
+# SQLite database files
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Test / debug
+.tox/
+.pytest_cache/
+nosetests.xml
+test-output/
+debug.log
+
+# Static and media files
+staticfiles/
+media/
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+
+# Pip / Poetry
+pip-log.txt
+poetry.lock
+Pipfile.lock
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Docker
+*.pid
+*.tar
+docker-compose.override.yml
+
+# MyPy / Pyright / Ruff / Pyre
+.mypy_cache/
+.pyre/
+.pytype/
+ruff_cache/
+
+# Celery
+celerybeat-schedule
