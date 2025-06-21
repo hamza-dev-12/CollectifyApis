@@ -60,6 +60,49 @@ def get_user_groups_data(request, user_id):
         return JsonResponse({"status": 500, "error": str(e)})
 
 
+@api_view(["GET"])
+def get_group_detail_by_id(request, group_id):
+    try:
+        group = Group.objects.prefetch_related("group", "group__group_members").get(
+            pk=group_id
+        )
+        result = {"group_id": group_id, "group_name": group.group_name, "members": []}
+        members = group.group.all()
+        month = request.GET.get("month")
+        year = request.GET.get("year")
+
+        if not month:
+            raise ValueError("Please provide month in the query")
+        if not year:
+            raise ValueError("Please provide year in the query")
+
+        month_filter = {"date__month": int(month), "date__year": int(year)}
+
+        for member in members:
+            payments = member.group_members.filter(**month_filter)
+            result["members"].append(
+                {
+                    "group_member_id": member.id,
+                    "email": member.email,
+                    "name": member.member_name,
+                    "payments": [
+                        {
+                            "payment_id": payment.id,
+                            "date": payment.date,
+                            "status": payment.status,
+                            "amount": payment.amount,
+                        }
+                        for payment in payments
+                    ],
+                }
+            )
+
+        return JsonResponse(status=200, data=result)
+
+    except Exception as e:
+        return JsonResponse(status=500, data={"message": str(e)})
+
+
 """
 # views.py
 from django.shortcuts import get_object_or_404
