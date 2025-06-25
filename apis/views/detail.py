@@ -1,7 +1,8 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
 from ..models import User, Group
 from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 
 """
 select_realted --> forward --> one-to-one
@@ -10,9 +11,18 @@ prefetch_related --> reverse --> many-to-many
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_user_groups_data(request, user_id):
     try:
         user = get_object_or_404(User, id=user_id)
+        month = request.GET.get("month")
+        year = request.GET.get("year")
+
+        print(month, year)
+        if not month or not year:
+            raise ValueError("Please provide month and year in query")
+
+        filter_date = {"date__month": int(month), "date__year": int(year)}
 
         result = {
             "user_id": user_id,
@@ -29,15 +39,21 @@ def get_user_groups_data(request, user_id):
             members = group.group.all()
             print("here")
 
-            group_data = {"id": group.id, "group_name": group.group_name, "members": []}
+            group_data = {
+                "id": group.id,
+                "group_name": group.group_name,
+                "base_amount": group.base_amount,
+                "members": [],
+            }
 
             for member in members:
-                payments = member.group_members.all()
+                payments = member.group_members.filter(**filter_date)
 
                 member_data = {
                     "group_member_id": member.id,
                     "email": member.email,
                     "name": member.member_name,
+                    "status": "paid" if len(payments) > 0 else "pending",
                     "payments": [
                         {
                             "payment_id": payment.id,
@@ -61,12 +77,18 @@ def get_user_groups_data(request, user_id):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_group_detail_by_id(request, group_id):
     try:
         group = Group.objects.prefetch_related("group", "group__group_members").get(
             pk=group_id
         )
-        result = {"group_id": group_id, "group_name": group.group_name, "members": []}
+        result = {
+            "group_id": group_id,
+            "group_name": group.group_name,
+            "base_amount": group.base_amount,
+            "members": [],
+        }
         members = group.group.all()
         month = request.GET.get("month")
         year = request.GET.get("year")
@@ -79,21 +101,21 @@ def get_group_detail_by_id(request, group_id):
         month_filter = {"date__month": int(month), "date__year": int(year)}
 
         for member in members:
-            payments = member.group_members.filter(**month_filter)
+            payment = member.group_members.filter(**month_filter).first()
             result["members"].append(
                 {
                     "group_member_id": member.id,
                     "email": member.email,
                     "name": member.member_name,
-                    "payments": [
-                        {
-                            "payment_id": payment.id,
-                            "date": payment.date,
-                            "status": payment.status,
-                            "amount": payment.amount,
-                        }
-                        for payment in payments
-                    ],
+                    "status": "paid" if payment else "pending",
+                    "payment": {
+                        "payment_id": payment.id,
+                        "date": payment.date,
+                        "status": payment.status,
+                        "amount": payment.amount,
+                    }
+                    if payment
+                    else None,
                 }
             )
 

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 class Group(models.Model):
     group_name = models.CharField(max_length=100)
+    base_amount = models.IntegerField(default=1000)
     admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name="admin")
 
     def __str__(self):

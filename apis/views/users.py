@@ -21,3 +21,10 @@ class ListUser(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = SignupSerializer
     permission_classes = [AllowAny]
+
+
+class DeleteUser(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = SignupSerializer
+    lookup_field = "pk"
+    lookup_url_kwarg = "user_id"

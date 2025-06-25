@@ -33,7 +33,10 @@ class CustomTokenObatainPairSerializer(TokenObtainPairSerializer):
             # Remove email from attrs since parent expects username
             attrs.pop("email")
 
-        return super().validate(attrs)
+        data = super().validate(attrs)
+        data["user_id"] = self.user.id
+
+        return data
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -55,8 +58,12 @@ class SignupSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ["id", "group_name", "admin"]
-        extra_kwargs = {"group_name": {"required": True}, "admin": {"required": True}}
+        fields = ["id", "group_name", "base_amount", "admin"]
+        extra_kwargs = {
+            "group_name": {"required": True},
+            "admin": {"required": True},
+            "base_amount": {"required": True},
+        }
 
 
 class MemberSerializer(serializers.ModelSerializer):
