@@ -10,11 +10,8 @@ class CreatePayment(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        print(serializer)
         if serializer.is_valid():
-            print(serializer)
             member = Member.objects.get(id=self.kwargs.get("groupMemberId"))
-            print(member)
             if serializer.is_valid():
                 serializer.save(status="paid", group_members=member)
 

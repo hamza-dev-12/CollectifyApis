@@ -6,4 +6,5 @@ urlpatterns = [
     path("member/", include("apis.routes.member")),
     path("payment/", include("apis.routes.payment")),
     path("detail/", include("apis.routes.detail")),
+    path("chat/", include("apis.routes.chat")),
 ]

@@ -50,7 +50,6 @@ class SignupSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        print(validated_data)
         user = User.objects.create_user(**validated_data)
         return user
 
@@ -89,6 +88,10 @@ class PaymentSerializer(serializers.ModelSerializer):
             "date": {"required": True},
             "amount": {"required": True},
             "status": {"required": False},
-            # "group_members": {"required": False},
-            # "group_and_members": {"required": False},
         }
+
+
+class ChatSerializer(serializers.Serializer):
+    class Meta:
+        fields = ["query", "month"]
+        extra_kwargs = {"query": {"required": True}, "month": {"required": True}}

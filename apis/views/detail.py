@@ -18,7 +18,6 @@ def get_user_groups_data(request, user_id):
         month = request.GET.get("month")
         year = request.GET.get("year")
 
-        print(month, year)
         if not month or not year:
             raise ValueError("Please provide month and year in query")
 
@@ -37,7 +36,6 @@ def get_user_groups_data(request, user_id):
 
         for group in groups:
             members = group.group.all()
-            print("here")
 
             group_data = {
                 "id": group.id,
@@ -68,7 +66,6 @@ def get_user_groups_data(request, user_id):
                 group_data["members"].append(member_data)
 
             result["groups"].append(group_data)
-            print("added group")
 
         return JsonResponse(data=result, status=200)
 
