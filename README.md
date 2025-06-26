@@ -35,7 +35,6 @@ A standout feature of this backend is its **Smart Chat interface**, allowing gro
 
 - "Who hasn’t paid this month?"
 - "How much total payment is pending?"
-- "List all paid members for June."
 
 This is achieved using **Google's Gemini API**, which processes the question, understands group context, and returns meaningful insights via structured responses.
 
